@@ -1,0 +1,100 @@
+<style>
+    body { font-family: sans-serif; background: #e4ece9; margin: 0; padding: 40px 0; }
+    .card { width: 340px; margin: 0 auto; background: white; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+    .card-header { background: #0b5c4f; color: white; text-align: center; padding: 18px; font-size: 18px; font-weight: bold; }
+    .section { padding: 20px 24px; border-bottom: 1px solid #eee; }
+    .section:last-child { border-bottom: none; }
+    .section h3 { text-align: center; margin: 0 0 14px 0; }
+    input[type="text"] { width: 100%; padding: 6px; margin: 4px 0; border: 1px solid #bbb; border-radius: 3px; box-sizing: border-box; }
+    .btn-row { text-align: center; margin-top: 10px; }
+    #messages p { text-align: center; margin: 10px 0; }
+    #messages b { color: #0b5c4f; }
+    a { color: #0b5c4f; }
+</style>
+
+<div class="card">
+    <div class="card-header">歡迎光臨，這是會員頁</div>
+
+    <div class="section" style="text-align:center;">
+        <b>{{ name }}</b>，歡迎登入系統<br>
+        <a href="/logout">登出系統</a>
+    </div>
+
+    <div class="section">
+        <h3>快來留言吧</h3>
+        <input type="text" id="content" placeholder="內容">
+        <div class="btn-row">
+            <button onclick="createMessage()">送出</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>MCP 伺服器設定</h3>
+        <p style="text-align:center;">
+            請使用 http://127.0.0.1:8000/mcp/ 網址<br>
+            點擊下方按鈕產生 Token 取得金鑰
+        </p>
+        <div class="btn-row">
+            <button onclick="createToken()">Generate</button>
+        </div>
+        <p id="token-display" style="text-align:center; word-break:break-all;"></p>
+    </div>
+
+    <div class="section">
+        <div id="messages"></div>
+    </div>
+
+</div>
+
+<script>
+    function loadMessages() {
+        fetch("/api/message")
+            .then(response => response.json())
+            .then(result => {
+                let messagesDiv = document.getElementById("messages");
+                messagesDiv.innerHTML = "";
+                for (let msg of result.data) {
+                    let html = "<p><b>" + msg.name + "</b>：" + msg.content;
+                    if (msg.self) {
+                        html += " <button onclick='deleteMessage(" + msg.id + ")'>x</button>";
+                    }
+                    html += "</p>";
+                    messagesDiv.innerHTML += html;
+                }
+            });
+    }
+
+    function createMessage(){
+        let content = document.getElementById("content").value;
+        fetch("/api/message", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: content })
+        })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById("content").value = "";
+                loadMessages();
+            });
+    }
+
+    function deleteMessage(id) {
+        if (confirm("確定要刪除嗎?")) {
+            fetch("/api/message/" + id, { method: "DELETE" })
+                .then(response => response.json())
+                .then(result => {
+                    loadMessages();
+                });
+        }
+    }
+
+    loadMessages();
+
+    function createToken() {
+        fetch("/api/token", { method: "PUT" })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById("token-display").textContent = result.token;
+            });
+    }
+</script>

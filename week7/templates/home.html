@@ -1,0 +1,37 @@
+<style>
+    body { font-family: sans-serif; background: #e4ece9; margin: 0; padding: 40px 0; }
+    .card { width: 340px; margin: 0 auto; background: white; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+    .card-header { background: #0b5c4f; color: white; text-align: center; padding: 18px; font-size: 18px; font-weight: bold; }
+    .section { padding: 20px 24px; border-bottom: 1px solid #eee; }
+    .section:last-child { border-bottom: none; }
+    .section h3 { text-align: center; margin: 0 0 14px 0; }
+    input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 6px; margin: 4px 0; border: 1px solid #bbb; border-radius: 3px; box-sizing: border-box; }
+    .btn-row { text-align: center; margin-top: 10px; }
+</style>
+
+<div class="card">
+    <div class="card-header">歡迎光臨，請註冊登入系統</div>
+
+    <div class="section">
+        <h3>註冊帳號</h3>
+        <form action="/signup" method="post">
+            <input type="text" name="name" placeholder="姓名" required>
+            <input type="email" name="email" placeholder="信箱" required>
+            <input type="password" name="password" placeholder="密碼" required>
+            <div class="btn-row">
+                <input type="submit" value="註冊">
+            </div>
+        </form>
+    </div>
+
+    <div class="section">
+        <h3>登入系統</h3>
+        <form action="/login" method="post">
+            <input type="email" name="email" placeholder="信箱" required>
+            <input type="password" name="password" placeholder="密碼" required>
+            <div class="btn-row">
+                <input type="submit" value="登入">
+            </div>
+        </form>
+    </div>
+</div>
